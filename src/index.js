@@ -7,6 +7,7 @@ dotenv.config();
 
 const app = express();
 app.use(cors())
+app.use(express.urlencoded({ extended: true }));
 
 const conexion = mysql.createConnection({
     
@@ -28,9 +29,6 @@ conexion.connect(function(err) {
 app.get('/',(req,res) => {
     res.send('Servidor Proyecto Final')
 })
-app.use((req, res) => {
-    res.status(404).send('Página no encontrada');
-});
 app.get('/promociones',(req,res) => {
     let tabledb = 'promociones';
     var sqlpetget = `SELECT * FROM ${tabledb};`;
@@ -126,6 +124,9 @@ app.post('/login', (req, res) => {
             return res.status(401).json({ message: 'Nombre de usuario o contraseña incorrectos' });
         }
     });
+});
+app.use((req, res) => {
+    res.status(404).send('Página no encontrada');
 });
 
 app.set('port',process.env.PORT || 8050)
