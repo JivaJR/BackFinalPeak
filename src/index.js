@@ -87,7 +87,7 @@ app.post('/register', (req, res) => {
         return res.status(400).json({ message: 'Se requieren nombre de usuario, contraseña y correo' });
     }
     // Verifica si el usuario ya existe en la base de datos
-    db.query(`SELECT * FROM usuarios WHERE email = '${email}';`, (err, result) => {
+    conexion.query(`SELECT * FROM usuarios WHERE email = '${email}';`, (err, result) => {
         if (err) {
             console.error('Error during registration:', err);
             return res.status(500).json({ message: 'Error interno del servidor' });
@@ -97,7 +97,7 @@ app.post('/register', (req, res) => {
             return res.status(409).json({ message: 'El nombre de usuario ya está registrado' });
         }
       // Si el usuario no existe, procede con la inserción en la base de datos
-        db.query('INSERT INTO usuarios (email, user_Password, user_FullName) VALUES (?, ?, ?)', [email, password, username], (err, result) => {
+        conexion.query('INSERT INTO usuarios (email, user_Password, user_FullName) VALUES (?, ?, ?)', [email, password, username], (err, result) => {
             if (err) {
                 console.error('Error during registration:', err);
                 return res.status(500).json({ message: 'Error interno del servidor' });
@@ -115,7 +115,7 @@ app.post('/login', (req, res) => {
         return res.status(400).json({ message: 'Se requieren nombre de usuario y contraseña' });
     }
     // Busca al usuario en la base de datos
-    db.query(`SELECT user_FullName FROM usuarios WHERE email = '${email}' AND user_Password = '${password}';`, (err, result) => {
+    conexion.query(`SELECT user_FullName FROM usuarios WHERE email = '${email}' AND user_Password = '${password}';`, (err, result) => {
         if (err) {
             console.error('Error during login:', err);
             return res.status(500).json({ message: 'Error interno del servidor' });
