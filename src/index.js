@@ -8,6 +8,8 @@ dotenv.config();
 const app = express();
 app.use(cors())
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static('src'))
 
 const conexion = mysql.createConnection({
     
@@ -107,6 +109,7 @@ app.post('/register', (req, res) => {
 });
 app.post('/login', (req, res) => {
     const { email, password } = req.body;
+    console.log(req.body)
     // Verifica que username y password estén presentes en el cuerpo de la solicitud
     if (!email || !password) {
         return res.status(400).json({ message: 'Se requieren nombre de usuario y contraseña' });
@@ -130,8 +133,6 @@ app.use((req, res) => {
 });
 
 app.set('port',process.env.PORT || 8050)
-app.use(express.json());
-app.use(express.static('src'))
 app.listen(app.get('port'), '0.0.0.0' ,()=>{
     console.log("Alojado en el puerto:",app.get('port'))
 })
