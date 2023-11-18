@@ -87,7 +87,7 @@ app.get('/hoteles',(req,res) => {
         FROM hoteles h
         JOIN ciudades c ON h.id_ciudad = c.id_ciudad
         JOIN paises p ON c.id_pais = p.id_pais
-        ${cond?cond:'ORDER BY id_hotel;'} LIMIT ${limit?limit:'10'}`;
+        ${cond?cond:'ORDER BY id_hotel;'} LIMIT ${limit?limit:10};`;
     conexion.query(sqlpetget, (err, mess, fields) => {
         res.status(200).json({
             data:mess,
