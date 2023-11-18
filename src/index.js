@@ -42,10 +42,14 @@ app.get('/promociones',(req,res) => {
 })
 app.get('/usuarios',(req,res) => {
     var {email} = req.query;
+    console.log(email)
     let tabledb = 'usuarios';
-    var sqlpetget = `SELECT * FROM ${tabledb} WHERE email = ${email};`;
+    var sqlpetget = `SELECT * FROM ${tabledb} WHERE email = '${email}';`;
     conexion.query(sqlpetget, (err, mess, fields) => {
-        if (result.length > 0) {
+        if(err){
+            res.send('Error de consulta')
+        }
+        if (mess.length > 0) {
             return res.status(409).json({ message: 'El usuario ya está registrado', status: true });
         }else {
             res.status(200).json({
