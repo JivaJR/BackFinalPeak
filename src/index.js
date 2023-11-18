@@ -26,8 +26,11 @@ conexion.connect(function(err) {
 });
 
 app.get('/',(req,res) => {
-    app.res('Proyecto Final PeakU')
+    res.send('Servidor Proyecto Final')
 })
+app.use((req, res) => {
+    res.status(404).send('Página no encontrada');
+});
 app.get('/promociones',(req,res) => {
     let tabledb = 'promociones';
     var sqlpetget = `SELECT * FROM ${tabledb};`;
