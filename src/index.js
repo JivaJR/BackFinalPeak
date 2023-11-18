@@ -40,6 +40,20 @@ app.get('/promociones',(req,res) => {
         });
     });
 })
+app.get('/usuarios',(req,res) => {
+    var {email} = req.query;
+    let tabledb = 'usuarios';
+    var sqlpetget = `SELECT * FROM ${tabledb} WHERE email = ${email};`;
+    conexion.query(sqlpetget, (err, mess, fields) => {
+        if (result.length > 0) {
+            return res.status(409).json({ message: 'El usuario ya está registrado', status: true });
+        }else {
+            res.status(200).json({
+                status:false,
+            });
+        }
+    });
+})
 app.get('/destinos',(req,res) => {
     let tabledb = 'ciudades';
     var sqlpetget = `SELECT * FROM ${tabledb};`;
@@ -54,7 +68,7 @@ app.get('/destinos',(req,res) => {
     });
 })
 app.get('/hoteles',(req,res) => {
-    var {pais,ciudad} = req.query;
+    var {pais,ciudad,limit} = req.query;
     console.log(pais,ciudad)
     let cond = null
     if (pais || ciudad){
@@ -73,7 +87,7 @@ app.get('/hoteles',(req,res) => {
         FROM hoteles h
         JOIN ciudades c ON h.id_ciudad = c.id_ciudad
         JOIN paises p ON c.id_pais = p.id_pais
-        ${cond?cond:'ORDER BY id_hotel;'}`;
+        ${cond?cond:'ORDER BY id_hotel;'} LIMIT ${limit?limit:'10'}`;
     conexion.query(sqlpetget, (err, mess, fields) => {
         res.status(200).json({
             data:mess,
