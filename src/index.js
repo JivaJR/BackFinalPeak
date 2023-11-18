@@ -69,17 +69,20 @@ app.get('/destinos',(req,res) => {
 })
 app.get('/hoteles',(req,res) => {
     var {pais,ciudad,limit} = req.query;
+    if (limit.length>=0){
+        limit = 10
+    }
     console.log(pais,ciudad)
     let cond = null
     if (pais || ciudad){
         if (pais && ciudad){
-            cond = `WHERE c.nombre_ciudad = '${ciudad}' AND p.pais_Name = '${pais}' ORDER BY id_hotel;`
+            cond = `WHERE c.nombre_ciudad = '${ciudad}' AND p.pais_Name = '${pais}' ORDER BY id_hotel`
         }
         else if (pais){
-            cond = `WHERE p.pais_Name = '${pais}' ORDER BY id_hotel;`
+            cond = `WHERE p.pais_Name = '${pais}' ORDER BY id_hotel`
         }
         else{
-            cond = `WHERE c.nombre_ciudad = '${ciudad}' ORDER BY id_hotel;`
+            cond = `WHERE c.nombre_ciudad = '${ciudad}' ORDER BY id_hotel`
         }
     }
     var sqlpetget = 
@@ -87,7 +90,8 @@ app.get('/hoteles',(req,res) => {
         FROM hoteles h
         JOIN ciudades c ON h.id_ciudad = c.id_ciudad
         JOIN paises p ON c.id_pais = p.id_pais
-        ${cond?cond:'ORDER BY id_hotel;'} LIMIT ${limit?limit:10};`;
+        ${cond?cond:'ORDER BY id_hotel'} 
+        LIMIT '${limit}';`;
     conexion.query(sqlpetget, (err, mess, fields) => {
         res.status(200).json({
             data:mess,
