@@ -26,25 +26,8 @@ conexion.connect(function(err) {
 });
 
 app.get('/',(req,res) => {
-    let tabledb = 'usuarios';
-    var sqlpetget = `SELECT * FROM ${tabledb};`;
-    conexion.query(sqlpetget, (err, mess, fields) => {
-        res.status(200).json({
-            data:mess,
-        });
-    });
+    app.res('Proyecto Final PeakU')
 })
-
-app.get('/',(req,res) => {
-    let tabledb = 'usuarios';
-    var sqlpetget = `SELECT * FROM ${tabledb};`;
-    conexion.query(sqlpetget, (err, mess, fields) => {
-        res.status(200).json({
-            data:mess,
-        });
-    });
-})
-
 app.get('/promociones',(req,res) => {
     let tabledb = 'promociones';
     var sqlpetget = `SELECT * FROM ${tabledb};`;
@@ -58,6 +41,10 @@ app.get('/destinos',(req,res) => {
     let tabledb = 'ciudades';
     var sqlpetget = `SELECT * FROM ${tabledb};`;
     conexion.query(sqlpetget, (err, mess, fields) => {
+        if (err) {
+            console.error('Error during registration:', err);
+            return res.status(500).json({ message: 'Error interno del servidor' });
+        }
         res.status(200).json({
             data:mess,
         });
@@ -79,7 +66,7 @@ app.get('/hoteles',(req,res) => {
         }
     }
     var sqlpetget = 
-        `SELECT h.id_hotel, p.pais_Name,  c.nombre_ciudad,  h.nombre_hotel, h.stars, h.camas, h.habitaciones
+        `SELECT h.id_hotel, p.pais_Name,  c.nombre_ciudad,  h.nombre_hotel, h.stars, h.camas, h.habitaciones,h.pricing
         FROM hoteles h
         JOIN ciudades c ON h.id_ciudad = c.id_ciudad
         JOIN paises p ON c.id_pais = p.id_pais
@@ -90,7 +77,53 @@ app.get('/hoteles',(req,res) => {
         });
     });
 })
-
+app.post('/register', (req, res) => {
+    const { username, password,email } = req.body;
+    // Verifica que username y password estén presentes en el cuerpo de la solicitud
+    if (!username || !password || !email) {
+        return res.status(400).json({ message: 'Se requieren nombre de usuario, contraseña y correo' });
+    }
+    // Verifica si el usuario ya existe en la base de datos
+    db.query(`SELECT * FROM usuarios WHERE email = '${email}';`, (err, result) => {
+        if (err) {
+            console.error('Error during registration:', err);
+            return res.status(500).json({ message: 'Error interno del servidor' });
+        }
+        // Si el usuario ya existe, devuelve un mensaje de error
+        if (result.length > 0) {
+            return res.status(409).json({ message: 'El nombre de usuario ya está registrado' });
+        }
+      // Si el usuario no existe, procede con la inserción en la base de datos
+        db.query('INSERT INTO usuarios (email, user_Password, user_FullName) VALUES (?, ?, ?)', [email, password, username], (err, result) => {
+            if (err) {
+                console.error('Error during registration:', err);
+                return res.status(500).json({ message: 'Error interno del servidor' });
+            }
+    
+            return res.status(201).json({ message: 'Registro exitoso' });
+        });
+    });
+});
+app.post('/login', (req, res) => {
+    const { email, password } = req.body;
+    // Verifica que username y password estén presentes en el cuerpo de la solicitud
+    if (!email || !password) {
+        return res.status(400).json({ message: 'Se requieren nombre de usuario y contraseña' });
+    }
+    // Busca al usuario en la base de datos
+    db.query(`SELECT user_FullName FROM usuarios WHERE email = '${email}' AND user_Password = '${password}';`, (err, result) => {
+        if (err) {
+            console.error('Error during login:', err);
+            return res.status(500).json({ message: 'Error interno del servidor' });
+        }
+      // Verifica si se encontró un usuario con las credenciales proporcionadas
+        if (result.length > 0) {
+            return res.status(200).json({ message: 'Inicio de sesión exitoso',userName:mess});
+        }else {
+            return res.status(401).json({ message: 'Nombre de usuario o contraseña incorrectos' });
+        }
+    });
+});
 
 app.set('port',process.env.PORT || 8050)
 app.use(express.json());
