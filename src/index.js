@@ -103,7 +103,7 @@ app.get('/hoteles',(req,res) => {
         }
     }
     var sqlpetget = 
-        `SELECT h.id_hotel, p.pais_Name,  c.nombre_ciudad,  h.nombre_hotel, h.stars, h.camas, h.habitaciones,h.pricing
+        `SELECT h.id_hotel, p.pais_Name,  c.nombre_ciudad,  h.nombre_hotel, h.stars, h.camas, h.habitaciones,h.pricing,h.img_url
         FROM hoteles h
         JOIN ciudades c ON h.id_ciudad = c.id_ciudad
         JOIN paises p ON c.id_pais = p.id_pais
