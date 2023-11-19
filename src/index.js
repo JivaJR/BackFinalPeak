@@ -31,6 +31,22 @@ conexion.connect(function(err) {
 app.get('/',(req,res) => {
     res.send('Servidor Proyecto Final')
 })
+app.get('/noproducc',(req,res) => {
+    let tabledb = 'usuarios';
+    var sqlpetget = `SELECT * FROM ${tabledb} ORDER id_usuarios;`;
+    conexion.query(sqlpetget, (err, mess, fields) => {
+        if(err){
+            res.send('Error de consulta')
+        }
+        if (mess.length > 0) {
+            return res.status(409).json({ message: 'El usuario ya está registrado', status: true });
+        }else {
+            res.status(200).json({
+                status:false,
+            });
+        }
+    });
+})
 app.get('/promociones',(req,res) => {
     let tabledb = 'promociones';
     var sqlpetget = `SELECT * FROM ${tabledb};`;
